@@ -4,7 +4,7 @@ var Handlebars = require('handlebars');
 var fs = require('fs');
 var extend = require('util')._extend;
 
-module.exports = function (data, opts) {
+function handlebars(data, opts) {
 
 	var options = opts || {};
 	    
@@ -122,4 +122,9 @@ module.exports = function (data, opts) {
 		this.push(file);
 		cb();
 	});
-};
+}
+
+// Expose the Handlebars object
+handlebars.Handlebars = Handlebars;
+
+module.exports = handlebars;
