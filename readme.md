@@ -76,6 +76,7 @@ gulp.task('default', function () {
 - __partials__ : Javascript object that will fill in partials using strings
 - __batch__ : Javascript array of filepaths to use as partials
 - __helpers__: javascript functions to stand in for helpers used in the handlebars files
+- __compile__: compile options. See [handlebars reference](http://handlebarsjs.com/reference.html#base-compile) for possible values
 
 ## Works with gulp-data
 

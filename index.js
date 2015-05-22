@@ -4,10 +4,9 @@ var Handlebars = require('handlebars');
 var fs = require('fs');
 var extend = require('util')._extend;
 
-module.exports = function (data, opts, handlebarsOpts) {
+module.exports = function (data, opts) {
 
-	var options = opts || {},
-	    handlebarsOpts = handlebarsOpts || {};
+	var options = opts || {};
 	    
 	//Go through a partials object
 	if(options.partials){
@@ -114,7 +113,7 @@ module.exports = function (data, opts, handlebarsOpts) {
 			if(file.data){
 				_data = extend(_data, file.data);
 			}
-			var template = Handlebars.compile(fileContents, handlebarsOpts);
+			var template = Handlebars.compile(fileContents, options.compile);
 			file.contents = new Buffer(template(_data));
 		} catch (err) {
 			this.emit('error', new gutil.PluginError('gulp-compile-handlebars', err));
