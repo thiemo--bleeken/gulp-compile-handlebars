@@ -1,7 +1,7 @@
 'use strict';
 var assert = require('assert');
 var gutil = require('gulp-util');
-var template = require('./index');
+var template = require('../index');
 
 it('should compile Handlebars templates', function (cb) {
 	var stream = template(
@@ -44,6 +44,51 @@ it('should compile Handlebars templates, and ignore unknown partials', function 
 
 	stream.write(new gutil.File({
 		contents: new Buffer('{{> header}}{{#each people}}<li>{{.}}</li>{{/each}} {{toLower message}}')
+	}));
+
+	stream.end();
+});
+
+it('should compile Handlebars templates, and use batched partials', function (cb) {
+	var stream = template({}, { batch: ['test/partials'] });
+
+	stream.on('data', function (data) {
+		assert.equal(data.contents.toString(), 'Header Goes Here');
+		cb();
+	});
+
+	stream.write(new gutil.File({
+		contents: new Buffer('{{> header-test}}')
+	}));
+
+	stream.end();
+});
+
+it('should compile Handlebars templates, and use batched NESTED partials', function (cb) {
+	var stream = template({}, { batch: ['test/partials'] });
+
+	stream.on('data', function (data) {
+		assert.equal(data.contents.toString(), 'Mobile Header Goes Here');
+		cb();
+	});
+
+	stream.write(new gutil.File({
+		contents: new Buffer('{{> mobile/header-test}}')
+	}));
+
+	stream.end();
+});
+
+it('should compile Handlebars templates, and use multiple batched NESTED partials directories', function (cb) {
+	var stream = template({}, { batch: ['test/partials/desktop', 'test/partials/mobile'] });
+
+	stream.on('data', function (data) {
+		assert.equal(data.contents.toString(), 'Desktop Header Goes Here');
+		cb();
+	});
+
+	stream.write(new gutil.File({
+		contents: new Buffer('{{> desktop/header-test}}')
 	}));
 
 	stream.end();
