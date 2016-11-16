@@ -8,17 +8,18 @@ var path = require('path');
 function handlebars(data, opts) {
 
 	var options = opts || {};
-	    
+	var hb = handlebars.Handlebars;
+
 	//Go through a partials object
 	if(options.partials){
 		for(var p in options.partials){
-			Handlebars.registerPartial(p, options.partials[p]);
+			hb.registerPartial(p, options.partials[p]);
 		}
 	}
 	//Go through a helpers object
 	if(options.helpers){
 		for(var h in options.helpers){
-			Handlebars.registerHelper(h, options.helpers[h]);
+			hb.registerHelper(h, options.helpers[h]);
 		}
 	}
 
@@ -58,7 +59,7 @@ function handlebars(data, opts) {
 		var name = partialName(filename, base);
 		var template = fs.readFileSync(filename, 'utf8');
 
-		Handlebars.registerPartial(name, template);
+		hb.registerPartial(name, template);
 	};
 
 	var registerPartials = function (dir, base, depth) {
@@ -96,8 +97,8 @@ function handlebars(data, opts) {
 			while((match = regex.exec(content)) !== null){
 				partial = match[1];
 				//Only register an empty partial if the partial has not already been registered
-				if(!Handlebars.partials.hasOwnProperty(partial)){
-					Handlebars.registerPartial(partial, '');
+				if(!hb.partials.hasOwnProperty(partial)){
+					hb.registerPartial(partial, '');
 				}
 			}
 		}
@@ -127,7 +128,7 @@ function handlebars(data, opts) {
 			if(file.data){
 				_data = extend(_data, file.data);
 			}
-			var template = Handlebars.compile(fileContents, options.compile);
+			var template = hb.compile(fileContents, options.compile);
 			file.contents = new Buffer(template(_data));
 		} catch (err) {
 			this.emit('error', new gutil.PluginError('gulp-compile-handlebars', err));
@@ -138,7 +139,11 @@ function handlebars(data, opts) {
 	});
 }
 
-// Expose the Handlebars object
-handlebars.Handlebars = Handlebars;
+handlebars.reset = function(){
+	// Expose the Handlebars object
+	handlebars.Handlebars = Handlebars.create();
+}
+
+handlebars.reset();
 
 module.exports = handlebars;
